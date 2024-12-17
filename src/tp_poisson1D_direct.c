@@ -65,20 +65,6 @@ int main(int argc,char *argv[])
   AB = (double *) malloc(sizeof(double)*lab*la);
 
   set_GB_operator_colMajor_poisson1D(AB, &lab, &la, &kv);
-    // 打印 AB 看是否主对角线全为 2
-    printf("---- Print AB (colMajor) after set_GB_operator_colMajor_poisson1D ----\n");
-    for (int row=0; row<lab; row++){
-        for (int col=0; col<la; col++){
-            printf("%+6.2f ", AB[row*la + col]);
-        }
-        printf("\n");
-    }
-
-    printf("\nMain diagonal:\n");
-    for(int i=0; i<la; i++){
-        printf(" AB[kv*la + i] = AB[%d] = %+6.2f\n", i, AB[kv*la + i]);
-    }
-    printf("-----------------------------------------------------\n");
   write_GB_operator_colMajor_poisson1D(AB, &lab, &la, "AB.dat");
 
   // Multiplication matrice-vecteur à l'aide de la fonction dgbmv
@@ -170,8 +156,7 @@ int main(int argc,char *argv[])
   if (X) free(X);
   if (EX_SOL) free(EX_SOL);
   if (RHS) free(RHS);
-  //if (Y) free(Y);
-  //if (ipiv) free(ipiv);
-   */
+  if (Y) free(Y);
+  if (ipiv) free(ipiv);*/
   printf("\n\n--------- End -----------\n");
 }
