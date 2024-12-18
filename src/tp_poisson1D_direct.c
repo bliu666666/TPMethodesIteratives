@@ -67,7 +67,7 @@ int main(int argc,char *argv[])
   set_GB_operator_colMajor_poisson1D(AB, &lab, &la, &kv);
   write_GB_operator_colMajor_poisson1D(AB, &lab, &la, "AB.dat");
 
-  // Multiplication matrice-vecteur à l'aide de la fonction dgbmv
+    // Multiplication matrice-vecteur à l'aide de la fonction dgbmv
   printf("Performing matrix-vector multiplication with dgbmv...\n");
   cblas_dgbmv(CblasColMajor,CblasNoTrans,la,la,kl,ku,1.0,AB,lab,EX_SOL,1,0.0,Y,1);
 
@@ -93,10 +93,7 @@ int main(int argc,char *argv[])
       dgbtrf_(&la, &la, &kl, &ku, AB, &lab, ipiv, &info);
       end = clock();
       lu_time = ((double)(end - start)) / CLOCKS_PER_SEC;
-      if (info==0)
-          printf("LU Factorization (Custom) completed successfully in %f seconds.\n", lu_time);
-      else
-          printf("Error during custom LU Factorization. INFO = %d\n", info);
+      printf("LU Factorization (Custom) completed successfully in %f seconds.\n", lu_time);
   }
 
   /* LU for tridiagonal matrix  (can replace dgbtrf_) */
@@ -136,12 +133,7 @@ int main(int argc,char *argv[])
       dgbsv_(&la, &kl, &ku, &NRHS, AB, &lab, ipiv, RHS, &la, &info);
       end = clock();
       lu_time = ((double)(end - start)) / CLOCKS_PER_SEC;
-
-      if (info == 0) {
-          printf("Direct solution using dgbsv completed successfully in %f seconds.\n", lu_time);
-      } else {
-          printf("Error during direct solve. INFO = %d\n", info);
-      }
+      printf("Direct solution using dgbsv completed successfully in %f seconds.\n", lu_time);
   }
 
   write_GB_operator_colMajor_poisson1D(AB, &lab, &la, "LU.dat");
