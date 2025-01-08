@@ -35,7 +35,6 @@ void richardson_alpha(double *AB, double *RHS, double *X, double *alpha_rich, in
     double alpha = *alpha_rich;
 
     double *res = (double*) malloc(n*sizeof(double));
-    double norme_res=cblas_dnrm2(n, RHS, 1);
     int k=0;
 
     double resn=1.0;
@@ -260,7 +259,6 @@ void gs_solve_Mz(const double* MB, int ldab, int n,
 void richardson_MB(double *AB, double *RHS, double *X, double *MB, int *lab, int *la,int *ku, int*kl, double *tol, int *maxit, double *resvec, int *nbite,int *NRHS, int *ipiv, int *info){
     int n = *la;
     double *res = (double*) malloc(n*sizeof(double));
-    double norme_res=cblas_dnrm2(n, RHS, 1);
     int k=0;
     int ku_m=*ku-1;
     double resn=1.0;
