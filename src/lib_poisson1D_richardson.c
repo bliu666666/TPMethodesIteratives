@@ -307,7 +307,7 @@ void richardson_MB(double *AB, double *RHS, double *X, double *MB, int *lab, int
         printf("Error: Could not open gnuplot.\n");
     }
 }
-
+*/
 void build_poisson1D_CSR(int n, int** csrRowPtr, int** csrColInd, double** csrVal) {
     int nnz = 3*n - 2;
     *csrRowPtr = (int*)   malloc((n+1)*sizeof(int));
@@ -416,4 +416,4 @@ void dcsc_mv(int n,const int *cscColPtr, const int *cscRowInd, const double *csc
             y[i] += val * xj;
         }
     }
-}*/
+}
