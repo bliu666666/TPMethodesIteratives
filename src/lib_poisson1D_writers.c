@@ -25,22 +25,22 @@ void write_GB_operator_rowMajor_poisson1D(double* AB, int* lab, int* la, char* f
 }
 
 void write_GB_operator_colMajor_poisson1D(double* AB, int* lab, int* la, char* filename){
-  FILE * file;
-  int ii,jj;
-  file = fopen(filename, "w");
-  //Numbering from 1 to la
-  if (file != NULL){
-    for (ii=0;ii<(*la);ii++){
-      for (jj=0;jj<(*lab);jj++){
-	fprintf(file,"%lf\t",AB[ii*(*lab)+jj]);
-      }
-      fprintf(file,"\n");
+    FILE * file;
+    int ii,jj;
+    file = fopen(filename, "w");
+    //Numbering from 1 to la
+    if (file != NULL){
+        for (ii=0;ii<(*la);ii++){
+            for (jj=0;jj<(*lab);jj++){
+                fprintf(file,"%lf\t",AB[ii*(*lab)+jj]);
+            }
+            fprintf(file,"\n");
+        }
+        fclose(file);
     }
-    fclose(file);
-  }
-  else{
-    perror(filename);
-  }
+    else{
+        perror(filename);
+    }
 }
 
 void write_GB2AIJ_operator_poisson1D(double* AB, int* la, char* filename){

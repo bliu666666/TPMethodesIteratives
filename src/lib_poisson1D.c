@@ -6,63 +6,80 @@
 #include "lib_poisson1D.h"
 
 void set_GB_operator_colMajor_poisson1D(double* AB, int *lab, int *la, int *kv){
-    int i;
-    for (i = 0; i < *la; i++) {
-        // diagonale de la bande inférieure
-        if (i > 0) AB[(*kv - 1) * (*la) + i] = -1.0;
-        // diagonale principale
-        AB[*kv * (*la) + i] = 2.0;
-        // Diagonale de la bande supérieure
-        if (i < *la - 1) AB[(*kv + 1) * (*la) + i] = -1.0;
+    int ii, jj, kk;
+    for (jj=0;jj<(*la);jj++){
+        kk = jj*(*lab);
+        if (*kv>=0){
+            for (ii=0;ii< *kv;ii++){
+                AB[kk+ii]=0.0;
+            }
+        }
+        AB[kk+ *kv]=-1.0;
+        AB[kk+ *kv+1]=2.0;
+        AB[kk+ *kv+2]=-1.0;
     }
+    AB[0]=0.0;
+    if (*kv == 1) {AB[1]=0;}
+
+    AB[(*lab)*(*la)-1]=0.0;
 }
 
 void set_GB_operator_colMajor_poisson1D_Id(double* AB, int *lab, int *la, int *kv){
-    int i;
-    for (i = 0; i < *la; i++) {
-        // La diagonale de la bande inférieure et la diagonale de la bande supérieure sont définies sur 0
-        if (i > 0) AB[(*kv - 1) * (*la) + i] = 0.0;
-        AB[*kv * (*la) + i] = 1.0; // Diagonale principale réglée à 1
-        if (i < *la - 1) AB[(*kv + 1) * (*la) + i] = 0.0;
+    int ii, jj, kk;
+    for (jj=0;jj<(*la);jj++){
+        kk = jj*(*lab);
+        if (*kv>=0){
+            for (ii=0;ii< *kv;ii++){
+                AB[kk+ii]=0.0;
+            }
+        }
+        AB[kk+ *kv]=0.0;
+        AB[kk+ *kv+1]=1.0;
+        AB[kk+ *kv+2]=0.0;
     }
+    AB[1]=0.0;
+    AB[(*lab)*(*la)-1]=0.0;
 }
 
 void set_dense_RHS_DBC_1D(double* RHS, int* la, double* BC0, double* BC1){
-    int i;
-    for (i = 0; i < *la; i++) {
-        RHS[i] = 0.0;
+    int jj;
+    RHS[0]= *BC0;
+    RHS[(*la)-1]= *BC1;
+    for (jj=1;jj<(*la)-1;jj++){
+        RHS[jj]=0.0;
     }
-    RHS[0] += *BC0;
-    RHS[*la - 1] += *BC1;
 }  
 
 void set_analytical_solution_DBC_1D(double* EX_SOL, double* X, int* la, double* BC0, double* BC1){
-    int i;
-    for (i = 0; i < *la; i++) {
-        EX_SOL[i] = (*BC0) + X[i] * ((*BC1) - (*BC0));
+    int jj;
+    double h, DELTA_T;
+    DELTA_T=(*BC1)-(*BC0);
+    for (jj=0;jj<(*la);jj++){
+        EX_SOL[jj] = (*BC0) + X[jj]*DELTA_T;
     }
 }  
 
 void set_grid_points_1D(double* x, int* la){
-    int i;
-    double h = 1.0 / ((double)(*la + 1)); // espace de la grille
-    for (i = 0; i < *la; i++) {
-        x[i] = (i + 1) * h; // Commencer par le premier point intérieur
+    int jj;
+    double h;
+    h=1.0/(1.0*((*la)+1));
+    for (jj=0;jj<(*la);jj++){
+        x[jj]=(jj+1)*h;
     }
 }
 
-double relative_forward_error(double* x, double* y, int* la){
-    double norm_diff = 0.0, norm_y = 0.0;
-    int i;
-    for (i = 0; i < *la; i++) {
-        norm_diff += (x[i] - y[i]) * (x[i] - y[i]);
-        norm_y += y[i] * y[i];
+double relative_forward_error(double* x, double* y, int* la) {
+    double ndiff = 0.0, ny = 0.0;
+    for (int i = 0; i < *la; i++) {
+        double d = x[i] - y[i];
+        ndiff += d * d;
+        ny += y[i] * y[i];
     }
-    return sqrt(norm_diff) / sqrt(norm_y);
+    return sqrt(ndiff) / sqrt(ny);
 }
 
 int indexABCol(int i, int j, int *lab){
-    return 0;
+    return j*(*lab)+i;
 }
 
 int dgbtrftridiag(int *la, int*n, int *kl, int *ku, double *AB, int *lab, int *ipiv, int *info){
@@ -87,4 +104,17 @@ int dgbtrftridiag(int *la, int*n, int *kl, int *ku, double *AB, int *lab, int *i
     }
 
     return *info;  // Renvoie des informations, 0 indique le succès
+}
+
+void print_GB_operator_colMajor_poisson1D(double* AB, int ldab, int la, const char* name)
+{
+    printf("\n=== %s (ldab=%d, la=%d) in col-major band ===\n", name, ldab, la);
+    for(int j=0; j<la; j++){
+        printf("col %2d:  ", j);
+        for(int r=0; r<ldab; r++){
+            printf("%6.2f ", AB[r + j*ldab]);
+        }
+        printf("\n");
+    }
+    printf("=== End of %s ===\n\n", name);
 }
