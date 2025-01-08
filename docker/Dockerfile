@@ -10,6 +10,8 @@ RUN apt update && apt install -y \
     libblas-dev \
     liblapack-dev \
     liblapacke-dev \
+    valgrind\
+    gnuplot\
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /Poisson1D
@@ -20,6 +22,6 @@ RUN mkdir -p bin
 
 ENV HOSTNAME=lbw-virtual-machine
 
-RUN make all
+RUN make all && make run
 
-CMD ["make", "run_tpPoisson1D_direct"]
+# CMD ["make", "run_tpPoisson1D_direct"]
