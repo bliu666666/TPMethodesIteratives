@@ -5,7 +5,7 @@
 /**********************************************/
 #include "lib_poisson1D.h"
 
-void eig_poisson1D(double* eigval, int *la){
+void eig_poisson1D(double* eigval, int *la) {
     double h = 1.0 / ((*la) + 1);
     for (int i = 0; i < *la; i++) {
         eigval[i] = 4 * sin((i + 1) * M_PI * h / 2.0)*sin((i + 1) * M_PI * h / 2.0);
@@ -17,19 +17,19 @@ double eigmax_poisson1D(int *la) {
     return 4 * sin((*la) * M_PI * h / 2.0)*sin((*la) * M_PI * h / 2.0);
 }
 
-double eigmin_poisson1D(int *la){
+double eigmin_poisson1D(int *la) {
     double h = 1.0 / ((*la) + 1);
     return 4 * sin(M_PI * h / 2.0)*sin(M_PI * h / 2.0);
 }
 
-double richardson_alpha_opt(int *la){
+double richardson_alpha_opt(int *la) {
     double lam_max = eigmax_poisson1D(la);
     double lam_min = eigmin_poisson1D(la);
     double alpha_opt = 2.0 / (lam_max + lam_min);
     return alpha_opt;
 }
 
-void richardson_alpha(double *AB, double *RHS, double *X, double *alpha_rich, int *lab, int *la,int *ku, int*kl, double *tol, int *maxit, double *resvec, int *nbite){
+void richardson_alpha(double *AB, double *RHS, double *X, double *alpha_rich, int *lab, int *la,int *ku, int*kl, double *tol, int *maxit, double *resvec, int *nbite) {
     int n = *la;
     double alpha = *alpha_rich;
 
@@ -38,14 +38,10 @@ void richardson_alpha(double *AB, double *RHS, double *X, double *alpha_rich, in
 
     double resn=1.0;
 
-    while((resn>*tol) && (k<(*maxit)-1)){
+    while((resn>*tol) && (k<(*maxit)-1)) {
         // new res
         cblas_dcopy(n, RHS,1,res,1);
-        cblas_dgbmv(CblasColMajor, CblasNoTrans,
-                    n, n, *kl, *ku,
-                    -1.0, AB,*lab,
-                    X,1,
-                    1.0,res,1);
+        cblas_dgbmv(CblasColMajor, CblasNoTrans,n, n, *kl, *ku,-1.0, AB,*lab,X,1,1.0,res,1);
         resn = cblas_dnrm2(n, res,1);
         resvec[k]=resn;
         cblas_daxpy(n, alpha, res,1, X,1);
@@ -55,22 +51,22 @@ void richardson_alpha(double *AB, double *RHS, double *X, double *alpha_rich, in
     free(res);
 }
 
-void extract_MB_jacobi_tridiag(double *AB, double *MB, int *lab, int *la,int *ku, int*kl, int *kv){
+void extract_MB_jacobi_tridiag(double *AB, double *MB, int *lab, int *la,int *ku, int*kl, int *kv) {
     int n = *la;
     int ldab = *lab;
-    for(int i=0; i<n; i++){
-        for(int j=0; j<ldab; j++){
+    for(int i=0; i<n; i++) {
+        for(int j=0; j<ldab; j++) {
             MB[i * ldab + j] = 0.0;
         }
         MB[i * ldab + 1] = AB[i * ldab + 1];
     }
 }
 
-void extract_MB_gauss_seidel_tridiag(double *AB, double *MB, int *lab, int *la,int *ku, int*kl, int *kv){
+void extract_MB_gauss_seidel_tridiag(double *AB, double *MB, int *lab, int *la,int *ku, int*kl, int *kv) {
     int n = *la;
     int ldab = *lab;
-    for(int i=0; i<n; i++){
-        for(int j=0; j<ldab; j++){
+    for(int i=0; i<n; i++) {
+        for(int j=0; j<ldab; j++) {
             MB[i * ldab + j] = 0.0;
         }
         MB[i * ldab + 1] = AB[i * ldab + 1];
@@ -265,14 +261,10 @@ void richardson_MB(double *AB, double *RHS, double *X, double *MB, int *lab, int
 
     dgbtrf_(la, la, kl, &ku_m, MB, lab, ipiv, info);
 
-    while((resn>*tol) && (k<(*maxit)-1)){
+    while((resn>*tol) && (k<(*maxit)-1)) {
         // new res
         cblas_dcopy(n, RHS,1,res,1);
-        cblas_dgbmv(CblasColMajor, CblasNoTrans,
-                    n, n, *kl, *ku,
-                    -1.0, AB,*lab,
-                    X,1,
-                    1.0,res,1);
+        cblas_dgbmv(CblasColMajor, CblasNoTrans,n, n, *kl, *ku,-1.0, AB,*lab,X,1,1.0,res,1);
         resn = cblas_dnrm2(n, res,1);
         resvec[k]=resn;
         dgbtrs_("N", la, kl, &ku_m, NRHS, MB, lab, ipiv, res, la, info, (unsigned long)1);
@@ -310,8 +302,8 @@ void richardson_MB(double *AB, double *RHS, double *X, double *MB, int *lab, int
 */
 void build_poisson1D_CSR(int n, int** csrRowPtr, int** csrColInd, double** csrVal) {
     int nnz = 3*n - 2;
-    *csrRowPtr = (int*)   malloc((n+1)*sizeof(int));
-    *csrColInd = (int*)   malloc(nnz*sizeof(int));
+    *csrRowPtr = (int*) malloc((n+1)*sizeof(int));
+    *csrColInd = (int*) malloc(nnz*sizeof(int));
     *csrVal    = (double*)malloc(nnz*sizeof(double));
 
     int* rowPtr = *csrRowPtr;
@@ -347,8 +339,8 @@ void build_poisson1D_CSR(int n, int** csrRowPtr, int** csrColInd, double** csrVa
 
 void build_poisson1D_CSC(int n, int** cscColPtr, int** cscRowInd, double** cscVal){
     int nnz = 3*n - 2;
-    *cscColPtr = (int*)   malloc((n+1)*sizeof(int));
-    *cscRowInd = (int*)   malloc(nnz*sizeof(int));
+    *cscColPtr = (int*) malloc((n+1)*sizeof(int));
+    *cscRowInd = (int*) malloc(nnz*sizeof(int));
     *cscVal    = (double*)malloc(nnz*sizeof(double));
 
     int* colPtr = *cscColPtr;

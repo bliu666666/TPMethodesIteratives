@@ -14,8 +14,6 @@ int main(int argc,char *argv[])
 /* ** argc: Number of arguments */
 /* ** argv: Values of arguments */
 {
-    int ierr;
-    int jj;
     int nbpoints, la;
     int ku, kl, lab, kv;
     int *ipiv=NULL;
@@ -27,7 +25,7 @@ int main(int argc,char *argv[])
     double *AB;
     double *MB;
 
-    double temp, relres;
+    double relres;
 
     double opt_alpha;
 
@@ -130,8 +128,7 @@ int main(int argc,char *argv[])
         write_GB_operator_colMajor_poisson1D(MB,&lab,&la,"MB_jac.dat");
         start=clock();
         print_GB_operator_colMajor_poisson1D(MB, lab, la, "MB BEFORE calling richardson_MB");
-        richardson_MB(AB,RHS,SOL,MB,&lab,&la,&ku,&kl,
-                      &tol,&maxit,resvec,&nbite,&NRHS,ipiv,&info);
+        richardson_MB(AB,RHS,SOL,MB,&lab,&la,&ku,&kl,&tol,&maxit,resvec,&nbite,&NRHS,ipiv,&info);
         print_GB_operator_colMajor_poisson1D(MB, lab, la, "MB BEFORE calling richardson_MB");
         end=clock();
         time_spent=(double)(end-start)/CLOCKS_PER_SEC;
@@ -144,8 +141,7 @@ int main(int argc,char *argv[])
         write_GB_operator_colMajor_poisson1D(MB,&lab,&la,"MB_gs.dat");
         start=clock();
         print_GB_operator_colMajor_poisson1D(MB, lab, la, "MB BEFORE calling richardson_MB");
-        richardson_MB(AB,RHS,SOL,MB,&lab,&la,&ku,&kl,
-                      &tol,&maxit,resvec,&nbite,&NRHS,ipiv,&info);
+        richardson_MB(AB,RHS,SOL,MB,&lab,&la,&ku,&kl,&tol,&maxit,resvec,&nbite,&NRHS,ipiv,&info);
         print_GB_operator_colMajor_poisson1D(MB, lab, la, "MB BEFORE calling richardson_MB");
         end=clock();
         time_spent=(double)(end-start)/CLOCKS_PER_SEC;
