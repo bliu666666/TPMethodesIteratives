@@ -12,7 +12,6 @@ void eig_poisson1D(double* eigval, int *la){
     }
 }
 
-// Calculate maximum eigenvalue
 double eigmax_poisson1D(int *la) {
     double h = 1.0 / ((*la) + 1);
     return 4 * sin((*la) * M_PI * h / 2.0)*sin((*la) * M_PI * h / 2.0);
@@ -79,7 +78,7 @@ void extract_MB_gauss_seidel_tridiag(double *AB, double *MB, int *lab, int *la,i
     }
 }
 
-void jacobi_1D(double *AB, int *lab, int *la, int *ku, int *kl,double *RHS, double *x, double *tol, int *maxit,double *resvec, int *nbite, double *EX_SOL){
+/*void jacobi_1D(double *AB, int *lab, int *la, int *ku, int *kl,double *RHS, double *x, double *tol, int *maxit,double *resvec, int *nbite, double *EX_SOL){
     int n = *la;
     int k = 0;
     double *x_old = (double*) malloc(n*sizeof(double));
@@ -255,6 +254,7 @@ void gs_solve_Mz(const double* MB, int ldab, int n,
         // or (r[i] - (-1)*z[i-1]) /2 => (r[i] + z[i-1]) /2
     }
 }
+*/
 
 void richardson_MB(double *AB, double *RHS, double *X, double *MB, int *lab, int *la,int *ku, int*kl, double *tol, int *maxit, double *resvec, int *nbite,int *NRHS, int *ipiv, int *info){
     int n = *la;
@@ -283,7 +283,7 @@ void richardson_MB(double *AB, double *RHS, double *X, double *MB, int *lab, int
     free(res);
 }
 
-void plot_convergence(double *resvec, int nbite) {
+/*void plot_convergence(double *resvec, int nbite) {
     FILE *gnuplot = popen("gnuplot -persist", "w");
     if (gnuplot != NULL) {
         fprintf(gnuplot, "set title 'Convergence History'\n");
@@ -416,4 +416,4 @@ void dcsc_mv(int n,const int *cscColPtr, const int *cscRowInd, const double *csc
             y[i] += val * xj;
         }
     }
-}
+}*/
